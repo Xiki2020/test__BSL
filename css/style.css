@@ -154,3 +154,27 @@ body {
 .result p {
   width: 49%;
 }
+.input__radio {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  transition: all 0.2s linear;
+}
+.input__radio:hover {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.38);
+  background-color: #fff;
+  color: #000;
+}
+@media (any-pointer: coarse) {
+  .btn {
+    border: 1px solid #fff;
+  }
+  .btn:hover {
+    background-color: #000;
+    color: #fff;
+    border-radius: 0;
+    cursor: none;
+    box-shadow: none;
+  }
+}

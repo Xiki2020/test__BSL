@@ -68,7 +68,7 @@ const surveyJSON = `[{
     ]
 }]`;
 
-class UserResult {
+class FormSurveyUser {
     constructor(name) {
         this._name = name;
         this.result = [];
@@ -91,14 +91,16 @@ const questGeneral = document.querySelector(".quest__general");
 let SurveyUser;
 
 nameUser.addEventListener("input", () => {
+    const regName = /^[a-zA-Zа-яА-Я]{2,12}$/;
     btnStart.hidden = true;
-    if (nameUser.value.length > 1) btnStart.hidden = false;
+    if (regName.exec(nameUser.value)) btnStart.hidden = false;
 });
 
 btnStart.innerHTML = Survey.nameStartButton;
 btnStart.addEventListener("click", () => {
+    btnStart.hidden = true;
     SurveyUser = "";
-    SurveyUser = new UserResult(nameUser.value);
+    SurveyUser = new FormSurveyUser(nameUser.value);
     nameUser.value = "";
     surveyStart.hidden = true;
     surveyForm.hidden = false;
@@ -121,55 +123,49 @@ function showQuest() {
         surveyForm.btn.addEventListener("click", showResult);
     };
 
-    const task = Survey.questions.find((elem) => {
-        if (elem.id == questGeneral.id) return elem;
-    });
+    const sectionQuestion = Survey.questions.find(question => question.id == questGeneral.id);
 
-    if (task) {
+    if (sectionQuestion) {
         const quest = document.createElement("p");
-        quest.innerHTML = task.quest;
+        quest.innerHTML = sectionQuestion.quest;
         questGeneral.append(quest);
 
-        if (task.answerType == "radio" || task.answerType == "checkbox") {
-            createInputRadioChekbox(task);
+        if (sectionQuestion.answerType == "radio" || sectionQuestion.answerType == "checkbox") {
+            createInputRadioChekbox(sectionQuestion);
         }
-        else if (task.answerType == "text") {
-            createInputText(task);
-        }
-    }
-}
+        else if (sectionQuestion.answerType == "text") {
+            createInputText(sectionQuestion);
+        };
+    };
+};
 
 function writeAnswer() {
     let AnswerQuest = {
         "quest": questGeneral.querySelector("p").innerHTML,
         "answers": [],
         "id_answers": [],
-    }
-    console.log(questGeneral.querySelector("p").innerHTML);
+    };
     surveyForm.querySelectorAll("input").forEach(elem => {
         if (elem.checked) {
             AnswerQuest.answers.push(elem.value);
             AnswerQuest.id_answers.push(elem.id);
-        }
+        };
     });
     SurveyUser.result.push(AnswerQuest);
-}
+};
 
-function createInputRadioChekbox(task) {
-    task.answers.forEach(elem => {
+function createInputRadioChekbox(sectionQuestion) {
+    sectionQuestion.answers.forEach(elem => {
         const div = document.createElement("div");
-        div.style.display = "flex";
-        div.style.justifyContent = "center";
-        div.style.alignItems = "center";
-        div.style.marginBottom = "10px";
+        div.classList.add("input__radio");
 
         const label = document.createElement("label");
-        label.style.width = "70%";
+        label.style.width = "90%";
         label.innerHTML = elem.answer;
         label.setAttribute("for", elem.id);
 
         const input = document.createElement("input");
-        input.type = task.answerType;
+        input.type = sectionQuestion.answerType;
         input.name = "quest";
         input.id = elem.id;
         input.value = elem.answer;
@@ -179,9 +175,9 @@ function createInputRadioChekbox(task) {
     });
 };
 
-function createInputText(task) {
+function createInputText(sectionQuestion) {
     const input = document.createElement("input");
-    input.type = task.answerType;
+    input.type = sectionQuestion.answerType;
     input.id = "text";
     input.checked = true;
     input.style.width = "100%";
@@ -216,6 +212,6 @@ function showResult() {
         surveyForm.hidden = true;
         surveyForm.btn.disabled = false;
         surveyForm.btn.hidden = false;
-        questGeneral.innerHTML = ""
+        questGeneral.innerHTML = "";
     });
 };
